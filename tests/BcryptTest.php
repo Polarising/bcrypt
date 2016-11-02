@@ -10,7 +10,7 @@ class BcryptTest extends \PHPUnit_Framework_TestCase
 		$bcrypt = new Bcrypt();
 		$plaintext = '123456';
 		$ciphertext = $bcrypt->encrypt($plaintext);
-		$this->assertNotEquals('*0');
+		$this->assertNotEquals('*0', $ciphertext);
 	}
 
 	public function testCanVerify()
