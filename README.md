@@ -2,6 +2,11 @@
 ========
 
 [![Build Status](https://travis-ci.org/Polarising/bcrypt.svg?branch=master)](https://travis-ci.org/Polarising/bcrypt)
+[![Latest Stable Version](https://poser.pugx.org/polarising/bcrypt/v/stable)](https://packagist.org/packages/polarising/bcrypt)
+[![Total Downloads](https://poser.pugx.org/polarising/bcrypt/downloads)](https://packagist.org/packages/polarising/bcrypt)
+[![Latest Unstable Version](https://poser.pugx.org/polarising/bcrypt/v/unstable)](https://packagist.org/packages/polarising/bcrypt)
+[![License](https://poser.pugx.org/polarising/bcrypt/license)](https://packagist.org/packages/polarising/bcrypt)
+[![composer.lock](https://poser.pugx.org/polarising/bcrypt/composerlock)](https://packagist.org/packages/polarising/bcrypt)
 
 Instead of using PHP hash password API, encrypt plain text by using Bcrypt algorithm, and make sure it's compatible with Bcrypt in other programming languages, like Java, python.
 
@@ -27,7 +32,7 @@ After installing, you need to require Composer's autoloader:
 require 'vendor/autoload.php';
 ```
 
-You can then later update Guzzle using composer:
+You can then later update Bcrypt using composer:
 
  ```bash
 composer.phar update
