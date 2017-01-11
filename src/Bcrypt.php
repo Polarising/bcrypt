@@ -7,10 +7,19 @@ class Bcrypt
 
 	public static function encrypt($plaintext, $bcrypt_version="2y", $cost=10)
 	{
-		$salt = self::generate_salt($cost, 17, $bcrypt_version);
-		$ciphertext = crypt($plaintext, $salt);
+		//make sure adding the cost in two digits
+		$cost = sprintf('%02d', $cost);
 
-    return $ciphertext;
+		$salt=self::generateSalt();
+
+        /* Create a string that will be passed to crypt, containing all
+         * of the settings, separated by dollar signs
+         */
+        $salt='$'.implode('$',[$bcrypt_version, $cost, $salt]);
+
+        $ciphertext = crypt($plaintext, $salt);
+
+        return $ciphertext;
 	}
 
 	public static function verify($plaintext, $ciphertext)
@@ -21,32 +30,26 @@ class Bcrypt
 		return crypt($plaintext, $ciphertext) == $ciphertext;
 	}
 
-	public static function generate_salt($cost, $length, $bcrypt_version){
-		//make sure adding the cost in two digits
-		$cost = sprintf('%02d', $cost);
-
+	public static function generateSalt(){
 		/* To generate the salt, first generate enough random bytes. Because
-         * base64 returns one character for each 6 bits, the we should generate
-         * at least 22*6/8=16.5 bytes, so we generate 17. Then we get the first
-         * 22 base64 characters
-         */
-	 $bytes = openssl_random_pseudo_bytes($length);
-   if ($bytes === false){
-       throw new RuntimeException('Unable to generate a random string');
-	 }
-	 $salt=substr(base64_encode($bytes),0,22);
+		 * base64 returns one character for each 6 bits, the we should generate
+		 * at least 22*6/8=16.5 bytes, so we generate 17. Then we get the first
+		 * 22 base64 characters
+		 */
+		$bytes = openssl_random_pseudo_bytes(17);
+
+		if($bytes === false){
+			throw new RuntimeException('Unable to generate a random string');
+		}
+
+		$salt = substr(base64_encode($bytes),0,22);
 
 		/* As blowfish takes a salt with the alphabet ./A-Za-z0-9 we have to
-         * replace any '+' in the base64 string with '.'. We don't have to do
-         * anything about the '=', as this only occurs when the b64 string is
-         * padded, which is always after the first 22 characters.
-         */
-        $salt=str_replace("+",".",$salt);
-
-        /* Create a string that will be passed to crypt, containing all
-         * of the settings, separated by dollar signs
-         */
-        $salt='$'.implode('$',[$bcrypt_version, $cost, $salt]);
-				return $salt;
+		 * replace any '+' in the base64 string with '.'. We don't have to do
+		 	* anything about the '=', as this only occurs when the b64 string is
+		 	* padded, which is always after the first 22 characters.
+		 	*/
+		 $salt=str_replace("+",".",$salt);
+		 return $salt;
 	}
 }
