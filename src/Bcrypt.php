@@ -1,4 +1,4 @@
-<?php 
+<?php
 namespace Bcrypt;
 
 class Bcrypt
@@ -7,6 +7,21 @@ class Bcrypt
 
 	public static function encrypt($plaintext, $bcrypt_version="2y", $cost=10)
 	{
+		$salt = self::generate_salt($cost, 17, $bcrypt_version);
+		$ciphertext = crypt($plaintext, $salt);
+
+    return $ciphertext;
+	}
+
+	public static function verify($plaintext, $ciphertext)
+	{
+		if(version_compare(PHP_VERSION, '5.6.0', '>=')){
+			return hash_equals($ciphertext, crypt($plaintext, $ciphertext));
+		}
+		return crypt($plaintext, $ciphertext) == $ciphertext;
+	}
+
+	public static function generate_salt($cost, $length, $bcrypt_version){
 		//make sure adding the cost in two digits
 		$cost = sprintf('%02d', $cost);
 
@@ -15,7 +30,11 @@ class Bcrypt
          * at least 22*6/8=16.5 bytes, so we generate 17. Then we get the first
          * 22 base64 characters
          */
-		$salt=substr(base64_encode(openssl_random_pseudo_bytes(17)),0,22);
+	 $bytes = openssl_random_pseudo_bytes($length);
+   if ($bytes === false){
+       throw new RuntimeException('Unable to generate a random string');
+	 }
+	 $salt=substr(base64_encode($bytes),0,22);
 
 		/* As blowfish takes a salt with the alphabet ./A-Za-z0-9 we have to
          * replace any '+' in the base64 string with '.'. We don't have to do
@@ -28,17 +47,6 @@ class Bcrypt
          * of the settings, separated by dollar signs
          */
         $salt='$'.implode('$',[$bcrypt_version, $cost, $salt]);
-
-        $ciphertext = crypt($plaintext, $salt);
-
-        return $ciphertext;
-	}
-
-	public static function verify($plaintext, $ciphertext)
-	{
-		if(version_compare(PHP_VERSION, '5.6.0', '>=')){
-			return hash_equals($ciphertext, crypt($plaintext, $ciphertext));
-		}
-		return crypt($plaintext, $ciphertext) == $ciphertext;
+				return $salt;
 	}
 }
