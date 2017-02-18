@@ -6,7 +6,7 @@ class Bcrypt
 	const VERSION = '1.0.0';
 
 	/**
-	 * @return integer The encrypt text
+	 * @return string The encrypt text
 	 */
 	public static function encrypt($plaintext, $bcrypt_version = '2y', $cost = 10)
 	{
@@ -25,6 +25,9 @@ class Bcrypt
         return $ciphertext;
 	}
 
+	/**
+	 * @return boolean The result that plaintext equals ciphertext or not
+	 */
 	public static function verify($plaintext, $ciphertext)
 	{
 		if (version_compare(PHP_VERSION, '5.6.0', '>=')) {
