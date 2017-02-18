@@ -56,7 +56,7 @@ class Bcrypt
 	 	 * anything about the '=', as this only occurs when the b64 string is
 	 	 * padded, which is always after the first 22 characters.
 	 	 */
-		$salt=str_replace('+', '.', $salt);
+		$salt = str_replace('+', '.', $salt);
 		return $salt;
 	}
 }
